@@ -1,0 +1,32 @@
+<html>
+    <body>
+        <h1>Getting Started</h1>
+        <h2>Step 1: Provide Host and API Token</h2>
+        <p>
+            For the client to access the credentials you need to specify the CommandK Host along with the API Token that was generated in the admin panel.
+            If you instantiate the client with CommandKClient.withDefaults() then the DefaultCredentialProviderChain will be used which looks for the Host
+            and API token in the following order:
+            <ol>
+                <li><b>Environment variables:</b> It will pick up the values from the environment variable COMMANDK_HOST and COMMANDK_API_TOKEN</li>
+                <li><b>System properties:</b> It will pick up the values from the system properties commandk.host and commandk.apiToken</li>
+                <li>
+                    <b>Configurations file:</b> It will pick up the values from a configuration file specified through the environment value
+                    COMMANDK_CONFIG_FILE or the system property commandk.configFile
+                </li>
+            </ol>
+        <p>Note: If you provide a configuration file then it must be of the following format:</p>
+        <pre>
+<code>host=&lt;host&gt;
+apiToken=&lt;token&gt;</code>
+        </pre>
+        <h2>Step 2: Initialize the client and query for credentials</h2>
+        <p>
+            You can create an instance of the CommandKClient with CommandKClient.withDefaults(), or you can create one by passing your own
+            implmentations of a KVStore and a CommandKCredentialsProvider.
+        </p>
+        <pre>
+<code>CommandKClient commandKClient = CommandKClient.withDefaults();
+List&lt;RenderedAppSecrets&gt; credentials = commandKClient.getRenderedAppSecrets("appId", "environment");</code>
+        </pre>
+    </body>
+</html>

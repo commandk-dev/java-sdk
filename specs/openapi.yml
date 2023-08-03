@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: CommandK API documentation
+  version: 0.1.0
+servers:
+  - url: /
+paths:
+  /apps/{catalog-app-id}/secrets/rendered:
+    get:
+      operationId: getRenderedAppSecrets
+      parameters:
+        - explode: false
+          in: header
+          name: if-none-match
+          required: false
+          schema:
+            type: string
+          style: simple
+        - explode: false
+          in: path
+          name: catalog-app-id
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: Identifier of the environment
+          explode: true
+          in: query
+          name: environment
+          required: true
+          schema:
+            type: string
+          style: form
+        - description: Rendering mode
+          explode: true
+          in: query
+          name: mode
+          required: true
+          schema:
+            $ref: '#/components/schemas/RenderingMode'
+          style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenderedAppSecretsResponse'
+          description: Rendered secrets for the app in the requested environment
+      summary: Get rendered secrets for an app in an environment
+      tags:
+        - sdk
+      x-accepts: application/json
+components:
+  parameters:
+    IfNoneMatch:
+      explode: false
+      in: header
+      name: if-none-match
+      required: false
+      schema:
+        type: string
+      style: simple
+    CatalogAppId:
+      explode: false
+      in: path
+      name: catalog-app-id
+      required: true
+      schema:
+        type: string
+      style: simple
+    EnvironmentIdQueryParam:
+      description: Identifier of the environment
+      explode: true
+      in: query
+      name: environment
+      required: true
+      schema:
+        type: string
+      style: form
+    RenderingModeParam:
+      description: Rendering mode
+      explode: true
+      in: query
+      name: mode
+      required: true
+      schema:
+        $ref: '#/components/schemas/RenderingMode'
+      style: form
+  schemas:
+    RenderedAppSecretsResponse:
+      allOf:
+        - allOf:
+            - $ref: '#/components/schemas/CommonDescriptorDoc'
+            - properties:
+                changelogId:
+                  type: string
+                secretDigest:
+                  type: string
+                incrementalId:
+                  format: int64
+                  type: integer
+              required:
+                - changelogId
+                - incrementalId
+                - secretDigest
+              type: object
+        - $ref: '#/components/schemas/RenderedAppSecretsResponse_allOf'
+    RenderingMode:
+      enum:
+        - Full
+        - PreviewOnly
+      type: string
+    CommonDescriptorDoc:
+      description: |
+        - Descriptors for an entity are top-level identifiers and properties for that entity
+        - It is helpful in views where the entity has to be listed without granular details
+        - Maybe helpful in preventing over-fetching of data
+    RenderedAppSecret:
+      properties:
+        key:
+          type: string
+        serializedValue:
+          type: string
+        valueType:
+          $ref: '#/components/schemas/RenderedAppSecretValueType'
+        secretId:
+          type: string
+      required:
+        - key
+        - secretId
+        - valueType
+      type: object
+    RenderedAppSecretValueType:
+      enum:
+        - urn:rendered-app-secret:value-type:String
+        - urn:rendered-app-secret:value-type:None
+      type: string
+    RenderedAppSecretsResponse_allOf:
+      properties:
+        secrets:
+          items:
+            $ref: '#/components/schemas/RenderedAppSecret'
+          type: array
+      required:
+        - secrets
+      type: object
+      example: null
+
