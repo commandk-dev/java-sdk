@@ -94,14 +94,15 @@ tasks.register("build-http-client", org.gradle.api.tasks.Exec::class.java) {
         ":assemble",
     )
     dependsOn("generate-http-client")
-    project.dependencies.add(
-        "implementation",
-        files(
-            "$clientOutputDir/build/libs/" +
-                "$clientArtifactId${if (clientArtifactVersion == "unspecified") "" else "-$clientArtifactVersion"}.jar",
-        ),
-    )
 }
+
+project.dependencies.add(
+    "implementation",
+    files(
+        "$clientOutputDir/build/libs/" +
+            "$clientArtifactId${if (clientArtifactVersion == "unspecified") "" else "-$clientArtifactVersion"}.jar",
+    ),
+)
 
 tasks.named("compileJava").configure {
     dependsOn("build-http-client")
@@ -124,13 +125,12 @@ tasks.named("assemble").configure {
 
 tasks.withType<Test> {
     useJUnit()
-//    if (isJava9OrLater()) {
-//        jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
-//        jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
-//        jvmArgs("--add-opens", "java.net.http/java.net.http=ALL-UNNAMED")
-//        jvmArgs("--add-opens", "java.net.http/jdk.internal.net.http=ALL-UNNAMED")
-//        jvmArgs("--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED")
-//    }
+    jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
+    jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
+    jvmArgs("--add-opens", "java.net.http/java.net.http=ALL-UNNAMED")
+    jvmArgs("--add-opens", "java.net.http/jdk.internal.net.http=ALL-UNNAMED")
+    jvmArgs("--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED")
+    jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
 }
 
 tasks.withType<Javadoc>() {
