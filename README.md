@@ -118,7 +118,7 @@ This uses the default configuration for the client and should be enough to start
 ## Configuring the client
 The CommandK client needs two values to communicate with the CommandK system. The domain/host where CommandK is installed and the API token to authenticate the requests to it. There are two ways this can be configured:
 1. Using the default configuration with `CommandKClient.withDefaults();`
-2. Providing a custom configuration with  `CommandKClient(kvStoreFactory, credentialsProvider)`
+2. Providing a custom configuration with `CommandKClient(kvStoreFactory, credentialsProvider)`
 
 ### Default Configuration
 ```java

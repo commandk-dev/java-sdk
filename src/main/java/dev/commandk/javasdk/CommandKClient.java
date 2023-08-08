@@ -11,6 +11,8 @@ import dev.commandk.javasdk.exception.ResponseNotModifiedException;
 import dev.commandk.javasdk.kvstore.GlobalKVStoreFactory;
 import dev.commandk.javasdk.kvstore.KVStore;
 import dev.commandk.javasdk.kvstore.KVStoreFactory;
+import dev.commandk.javasdk.models.EnvironmentDescriptor;
+import dev.commandk.javasdk.models.GetAllEnvironmentsResponse;
 import dev.commandk.javasdk.models.RenderedAppSecret;
 import dev.commandk.javasdk.models.RenderedAppSecretsResponse;
 import dev.commandk.javasdk.models.RenderingMode;
@@ -87,8 +89,19 @@ public class CommandKClient {
 
     public @Nonnull List<RenderedAppSecret> getRenderedAppSecrets(
         @Nonnull String catalogAppId,
-        @Nonnull String environmentId
+        @Nonnull String environment
     ) {
+
+        Optional<EnvironmentDescriptor> environmentDescriptor = getEnvironments().stream().filter( it ->
+                it.getName().equals(environment) || it.getSlug().equals(environment)
+        ).findAny();
+
+        if(!environmentDescriptor.isPresent()) {
+            throw new ClientException("No such environment was found");
+        }
+
+        String environmentId = environmentDescriptor.get().getId();
+
         GetRenderedAppSecretsRequest getRenderedAppSecretsRequest =
                 new GetRenderedAppSecretsRequest(catalogAppId, environmentId);
 
@@ -119,6 +132,17 @@ public class CommandKClient {
                 throw e;
             else
                 throw new ClientException(String.format("%s: %s", e.getClass(), e.getMessage()));
+        }
+    }
+
+    List<EnvironmentDescriptor> getEnvironments() {
+        try{
+            ResponseEntity<GetAllEnvironmentsResponse> getAllEnvironmentsResponseResponseEntity =
+                    sdkApi.getEnvironmentsWithHttpInfo(null, null, null);
+
+            return getAllEnvironmentsResponseResponseEntity.getBody().getEnvironments();
+        } catch (Exception e) {
+            throw new ClientException(String.format("%s: %s", e.getClass(), e.getMessage()));
         }
     }
 
