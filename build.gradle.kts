@@ -142,10 +142,10 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri(System.getenv("AWS_S3_URL"))
+            url = uri(System.getenv("AWS_S3_URL") ?: "")
             credentials(AwsCredentials::class.java) {
-                accessKey = System.getenv("AWS_ACCESS_KEY_ID")
-                secretKey = System.getenv("AWS_SECRET_ACCESS_KEY")
+                accessKey = System.getenv("AWS_ACCESS_KEY_ID") ?: ""
+                secretKey = System.getenv("AWS_SECRET_ACCESS_KEY") ?: ""
             }
         }
     }
