@@ -22,6 +22,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION_TAG: ${{ github.ref_name }}
+    env:
+      AWS_S3_URL: ${{ secrets.ARTIFACTS_UPLOADER_S3_URL }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.ARTIFACTS_UPLOADER_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_UPLOADER_SECRET_ACCESS_KEY }}
+      VERSION_TAG: ${{ github.ref_name }}
