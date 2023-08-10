@@ -142,10 +142,10 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/commandk-dev/java-sdk")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+            url = uri(System.getenv("AWS_S3_URL"))
+            credentials(AwsCredentials::class.java) {
+                accessKey = System.getenv("AWS_ACCESS_KEY_ID")
+                secretKey = System.getenv("AWS_SECRET_ACCESS_KEY")
             }
         }
     }

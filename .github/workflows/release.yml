@@ -1,8 +1,8 @@
 name: Build and publish the Java SDK
-on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*' # v0.0.1 - this syntax of tags is supported
+on: [push]
+#  push:
+#    tags:
+#      - 'v[0-9]+.[0-9]+.[0-9]+*' # v0.0.1 - this syntax of tags is supported
 
 jobs:
   build-and-publish-java-sdk:
@@ -23,5 +23,7 @@ jobs:
         with:
           arguments: publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION_TAG: ${{ github.ref_name }}
+          AWS_S3_URL: ${{ secrets.ARTIFACTS_UPLOADER_S3_URL }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.ARTIFACTS_UPLOADER_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_UPLOADER_SECRET_ACCESS_KEY }}
+#          VERSION_TAG: ${{ github.ref_name }}
