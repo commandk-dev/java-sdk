@@ -11,16 +11,17 @@ import dev.commandk.javasdk.exception.ResponseNotModifiedException;
 import dev.commandk.javasdk.kvstore.GlobalKVStoreFactory;
 import dev.commandk.javasdk.kvstore.KVStore;
 import dev.commandk.javasdk.kvstore.KVStoreFactory;
-import dev.commandk.javasdk.models.EnvironmentDescriptor;
-import dev.commandk.javasdk.models.GetAllEnvironmentsResponse;
-import dev.commandk.javasdk.models.RenderedAppSecret;
-import dev.commandk.javasdk.models.RenderedAppSecretsResponse;
-import dev.commandk.javasdk.models.RenderingMode;
+import dev.commandk.javasdk.models.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Collections.emptyList;
 
 class CommandKResponse {
 
@@ -88,8 +89,9 @@ public class CommandKClient {
 
 
     public @Nonnull List<RenderedAppSecret> getRenderedAppSecrets(
-        @Nonnull String catalogAppId,
-        @Nonnull String environment
+            @Nonnull String catalogAppId,
+            @Nonnull String environment,
+            @Nullable List<String> secretNames
     ) {
 
         Optional<EnvironmentDescriptor> environmentDescriptor = getEnvironments().stream().filter( it ->
@@ -109,8 +111,9 @@ public class CommandKClient {
         String ifNoneMatch = commandKResponseOptional.map(CommandKResponse::getETag).orElse("");
 
         try{
+            List<String> secretNamesToQuery = secretNames != null ? secretNames : emptyList();
             ResponseEntity<RenderedAppSecretsResponse> renderedAppSecretsWithHttpInfo =
-                    sdkApi.getRenderedAppSecretsWithHttpInfo(catalogAppId, environmentId, RenderingMode.FULL, ifNoneMatch);
+                    sdkApi.getRenderedAppSecretsWithHttpInfo(catalogAppId, environmentId, RenderingMode.FULL, ifNoneMatch, secretNamesToQuery);
 
             List<RenderedAppSecret> renderedAppSecrets = renderedAppSecretsWithHttpInfo.getBody().getSecrets();
 

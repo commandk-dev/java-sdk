@@ -26,9 +26,8 @@ java {
 }
 apply(plugin = "org.openapi.generator")
 
-val junitVersion = "4.13.2"
-val mockitoVersion = "3.12.4"
-val powermockVersion = "2.0.9"
+val junitVersion = "5.10.0"
+val mockitoVersion = "5.4.0"
 
 val swaggerAnnotationsVersion = "1.5.22"
 val jacksonVersion = "2.10.5"
@@ -53,17 +52,16 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationVersion")
 
-    testImplementation("junit:junit:$junitVersion")
-    testImplementation("org.mockito:mockito-inline:$mockitoVersion")
-    testImplementation("org.powermock:powermock-core:$powermockVersion")
-    testImplementation("org.powermock:powermock-api-mockito2:$powermockVersion")
-    testImplementation("org.powermock:powermock-module-junit4:$powermockVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 }
 
 val clientOutputDir = "$buildDir/generated/openapi/default/java-client"
 val clientArtifactId = project.name.toLowerCase().replace(Regex("[^a-z0-9]"), "")
 val clientArtifactVersion = project.version.toString()
-println("project.version: ${project.version}")
 
 tasks.register("generate-http-client", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class.java) {
     inputSpec.set("$rootDir/specs/openapi.yml")
@@ -124,13 +122,7 @@ tasks.named("assemble").configure {
 }
 
 tasks.withType<Test> {
-    useJUnit()
-    jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
-    jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
-    jvmArgs("--add-opens", "java.net.http/java.net.http=ALL-UNNAMED")
-    jvmArgs("--add-opens", "java.net.http/jdk.internal.net.http=ALL-UNNAMED")
-    jvmArgs("--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED")
-    jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
+    useJUnitPlatform()
 }
 
 tasks.withType<Javadoc>() {

@@ -14,6 +14,7 @@ paths:
         - $ref: "#/components/parameters/CatalogAppId"
         - $ref: "#/components/parameters/EnvironmentIdQueryParam"
         - $ref: "#/components/parameters/RenderingModeParam"
+        - $ref: "#/components/parameters/SecretNameFilter"
       responses:
         "200":
           description: Rendered secrets for the app in the requested environment
@@ -86,6 +87,15 @@ components:
         type: string
       description: UUID of the item after which the items are needed (for supporting
         the next use-case)
+    SecretNameFilter:
+      in: query
+      name: secret-name-filter
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+      description: Secret names to return values for
   schemas:
     RenderedAppSecretsResponse:
       allOf:
