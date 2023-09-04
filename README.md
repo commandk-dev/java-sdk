@@ -7,63 +7,25 @@ The CommandK SDK enables users to fetch secrets programmatically, either directl
 ```gradle
 repositories {
     maven {
-        url = uri("https://maven.pkg.github.com/commandk-dev/java-sdk")
-        credentials {
-            username = "<GITHUB_USERNAME>"
-            password = "<GITHUB_ACCESS_TOKEN>"
-        }
+        url = uri("https://mvn.cmdk.sh")
     }
+    mavenCentral()
 }
 
 dependencies {
-    implementation 'dev.commandk:java-sdk:v0.0.4'
+    implementation 'dev.commandk:java-sdk:0.5.0:all'
 }
 ```
 
 ### Maven users
-In your `settings.xml` file usually located at `~/.m2/settings.xml` add this repository:
-```xml
-<settings>
-
-    <activeProfiles>
-        <activeProfile>github</activeProfile>
-    </activeProfiles>
-
-    <profiles>
-        <profile>
-            <id>github</id>
-            <repositories>
-                <repository>
-                    <id>github</id>
-                    <url>https://maven.pkg.github.com/commandk-dev/java-sdk/</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
-
-    <servers>
-        <server>
-            <id>github</id>
-            <username>username</username>
-            <password>access_token</password>
-        </server>
-    </servers>
-</settings>
-```
-And in your project's `pom.xml` file add:
+In your project's `pom.xml` file add the repository and dependency:
 ```xml
 <project>
 
    <repositories>
       <repository>
-         <id>github</id>
-         <url>https://maven.pkg.github.com/commandk-dev/java-sdk</url>
-         <snapshots>
-            <enabled>true</enabled>
-         </snapshots>
+         <id>commandk</id>
+         <url>https://mvn.cmdk.sh</url>
       </repository>
    </repositories>
 
@@ -71,7 +33,7 @@ And in your project's `pom.xml` file add:
       <dependency>
          <groupId>dev.commandk</groupId>
          <artifactId>java-sdk</artifactId>
-         <version>v0.0.4</version>
+         <version>0.5.0</version>
          <classifier>all</classifier>
       </dependency>
    </dependencies>
@@ -93,7 +55,7 @@ public class Main {
         // The host and access token need to be provided to the client somehow.
         // One of the ways the client tries to access it is by looking them up in the
         // system properties with the `commandk.host` and `commandk.apiToken` properties.
-        System.setProperty("commandk.host", "https://api.<org_name>.commandk.dev");
+        System.setProperty("commandk.host", "https://api.commandk.dev");
         System.setProperty("commandk.apiToken", "<api_token>");
 
         // With the default configuration, the client will pick up the credentials from
@@ -103,7 +65,8 @@ public class Main {
         // To fetch secrets of an app we need to specify the app id and the environment id
         List<RenderedAppSecret> renderedAppSecrets = commandKClient.getRenderedAppSecrets(
                 "<app_id>",
-                "<environment_id>"
+                "<environment>",  // staging, production, sandbox, development,
+                List.of()
         );
 
         // And it's ready to be consumed
@@ -132,12 +95,14 @@ The default configuration is what the example above uses. It will look up the ho
    3.2 At the location provided in the java system property `commandk.configFile`
 
 *In our example the client finds the credentials we set in the java system properties.*
+> **NOTE** If you are using an on-prem installation of commandk, your host value would look like this `https://api.<installation-name>.commandk.dev`
+> For the value of `host`, refer to the Customer Information Sheet that would have been shared by the CommandK team for your installation. Usually, if you access your dashboard at `app.<name>.commandk.dev`, then the host for your commandk installation would be `https://api.<name>.commandk.dev`
 
 #### Using the configuration file
 Instead of setting the credentials directly in the system properties you could also load them up from a file.
 1. Create a file at `~/commandk.config`
 ```
-host: https://api.<company>.commandk.dev
+host: https://api.commandk.dev
 apiToken: <api_token>
 ```
 2. Set the environment variable
@@ -156,7 +121,7 @@ or like in the example set the system property in the application
 // The host and access token need to be provided to the client somehow.
 // One of the ways the client tries to access it is by looking them up in the
 // system properties with the `commandk.host` and `commandk.apiToken` properties.
-System.setProperty("commandk.host", "https://api.<org_name>.commandk.dev");
+System.setProperty("commandk.host", "https://api.commandk.dev");
 System.setProperty("commandk.apiToken", "<api_token>");
 
 // with this
@@ -170,7 +135,7 @@ class CustomCredentialsProvider implements CommandKCredentialsProvider {
 
     @Override
     public CommandKCredentials resolveCredentials() {
-        return new CommandKCredentials("https://api.<org_name>.commandk.dev", "<api_token>");
+        return new CommandKCredentials("https://api.commandk.dev", "<api_token>");
     }
 }
 ```
@@ -200,7 +165,8 @@ public class Main {
       // To fetch secrets of an app we need to specify the app id and the environment id
       List<RenderedAppSecret> renderedAppSecrets = commandKClient.getRenderedAppSecrets(
               "<app_id>",
-              "<environment_id>"
+              "<environment>",
+              List.of()
       );
 
       // And it's ready to be consumed
@@ -214,7 +180,7 @@ class CredentialProviderExample implements CommandKCredentialsProvider {
 
    @Override
    public CommandKCredentials resolveCredentials() {
-      return new CommandKCredentials("https://api.<org_name>.commandk.dev", "<api_token>");
+      return new CommandKCredentials("https://api.commandk.dev", "<api_token>");
    }
 }
 ```
