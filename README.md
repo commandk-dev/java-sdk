@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.commandk:java-sdk:0.1.0:all'
+    implementation 'dev.commandk:java-sdk:0.5.0:all'
 }
 ```
 
@@ -33,7 +33,7 @@ In your project's `pom.xml` file add the repository and dependency:
       <dependency>
          <groupId>dev.commandk</groupId>
          <artifactId>java-sdk</artifactId>
-         <version>0.1.0</version>
+         <version>0.5.0</version>
          <classifier>all</classifier>
       </dependency>
    </dependencies>
