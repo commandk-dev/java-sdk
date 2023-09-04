@@ -134,7 +134,7 @@ publishing {
         create<MavenPublication>("main") {
             groupId = "dev.commandk"
             artifactId = "java-sdk"
-            version = System.getenv("VERSION_TAG") ?: version
+            version = System.getenv("VERSION_TAG")?.replace("v", "") ?: version
 
             from(components["java"])
         }
